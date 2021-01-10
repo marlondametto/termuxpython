@@ -1,0 +1,26 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Mensagem{% endblock %} 
+
+{% block head %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% block styles %}                              {{super()}}                                     <link rel="stylesheet"
+      href="{{url_for('.static', filename='style.css')}}">
+{% endblock %}
+
+{% endblock %}
+
+{% block body %}
+<form action="/" method="POST">                 
+<div class="container">                           <h1>Digite a mensagem</h1>                      <hr>
+<div class="row">
+<input id="text" type="text" class="form-control col-md-5"  placeholder="Digite o texto" name="text" required>
+<div class="col-md-4>
+<button type="submit" class="btn btn-primary">Enviar</button>
+</div>
+</div>
+      </div>
+    </form>
+{% endblock %}
