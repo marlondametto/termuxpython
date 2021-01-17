@@ -4,10 +4,14 @@
 <div class="container">
 	<h1>REDMI NOTE 4</h1>
 	<p>Aqui encontram-se algumas funcionalidades que podem ser extraídas de um celular Android utilizando Termux juntamente com a linguagem Python</p>
-	<div class="d-grid gap-2">
-  <button type="submit" class="btn btn-primary" type="button" formaction="/voz.html">Texto para voz</button>
+	<form action={{ url_for('playsound') }}  method="get">
+		<div class="d-grid gap-2">
+  <button type="submit" class="btn btn-primary" type="button" id="btn-voz">Texto para voz</button>
+		</div>
+	</form>
+<br/>
+<div class="d-grid gap-2">
   <button class="btn btn-primary" type="button">Enviar SMS</button>
-</div>
 </div>
 {% endblock %}
 
