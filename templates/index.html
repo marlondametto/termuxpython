@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Bem-Vindo{% endblock %}
 {% block content %}
-<div class="container">
-	<h1>REDMI NOTE 4</h1>
-	<p>Aqui encontram-se algumas funcionalidades que podem ser extraídas de um celular Android utilizando Termux juntamente com a linguagem Python</p>
+<div class="container">	
 	<form action={{ url_for('playsound') }}  method="get">
 		<div class="d-grid gap-2">
-  <button type="submit" class="btn btn-primary" type="button" id="btn-voz">Texto para voz</button>
+  <button type="submit" class="btn btn-primary btn-block" type="button" id="btn-voz">Texto para voz</button>
 		</div>
 	</form>
 <br/>
 <div class="d-grid gap-2">
-  <button class="btn btn-primary" type="button">Enviar SMS</button>
+  <button class="btn btn-primary btn-block" type="button">Enviar SMS</button>
 </div>
 {% endblock %}
 

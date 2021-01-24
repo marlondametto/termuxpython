@@ -4,11 +4,14 @@
 <div class="container">
 	<h3>Texto para Voz</h3>
 	<form action="{{ url_for('playsound') }}" method="POST">
-	<div class="mb-3">
-		<label for="control-msg" class="form-label">Digite a mensagem</label>
-		<textarea class="form-control" id="control-msg" name="control-msg" rows="3"></textarea>
-	</div>
-	<button type="submit" class="btn btn-primary">Enviar</button>	
+		<div class="mb-3">
+			<label for="control-msg" class="form-label">Digite a mensagem</label>
+			<textarea class="form-control" id="control-msg" name="control-msg" rows="3"></textarea>
+		</div>
+		<div class="float-end">
+			<button type="submit" class="btn btn-primary">Enviar</button>
+		</div>
+		<div class="clearfix"></div>
 	</form>
 </div>
 {% endblock %}

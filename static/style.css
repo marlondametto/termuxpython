@@ -1,4 +1,9 @@
+.cabecalho {
+	margin: 2em;
+	padding: 1em;
+}
+
 h1{
-	font-family: "times new roman";
-	font-color: "gray";
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: "gray";
 }
