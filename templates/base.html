@@ -3,21 +3,26 @@
 <html>
 	<head>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-		<link rel="stylesheet" href="../static/style.css">		
-    	<meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../static/style.css">
+		<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<title>{% block title %}{% endblock%}</title>
 	</head>
 
 	<body>
-		<div class="border border-primray rounded cabecalho">
-			<h1 class="display-3">Pyterm</h1>
-			<p>
-				Este aplicativo foi desenvolvido em Python rodando sobre Termux
-				em um celular Android
-			</p>			  
-			<img src="../static/img/python1.png" class="rounded float-end" alt="python">
-			<div class="clearfix"></div>
+		<div class="container">
+			<div class="border border-primray rounded cabecalho">
+				<h1 class="display-3 text-info">Pyterm</h1>
+				<p class="text-secondary fw-light">
+					Este aplicativo foi desenvolvido em Python e roda sobre Termux
+					em um celular Android
+				</p>
+				<img src="../static/img/android2.png" class="rounded float-end logos" alt="android">
+				<img src="../static/img/termux1.png" class="rounded float-end logos" alt="termux">
+				<img src="../static/img/python1.png" class="rounded float-end logos" alt="python">
+				<div class="clearfix"></div>
+			</div>
 		</div>
 		{% block content %}
 		

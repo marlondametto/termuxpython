@@ -1,6 +1,10 @@
 .cabecalho {
-	margin: 2em;
 	padding: 1em;
+	margin: 1em 0 2em 0;
+}
+
+.logos{
+	margin-left: 1em;
 }
 
 h1{
