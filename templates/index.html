@@ -12,13 +12,16 @@
 		  </h2>
 		  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordMenu">
 			<div class="accordion-body">
-				<strong>Envie uma mensagem que será lida em voz alta pelo smartphone.</strong>
-				<p>Clique no botão para acessar a funcionalidade</p>
-				<form action={{ url_for('playsound') }}  method="get">
-					<button type="submit" class="btn btn-secondary" type="button" id="btn-voz">Texto para voz</button>					
-				</form>
-				
-				
+				<p>Envie uma mensagem que será lida em voz alta pelo smartphone.</p>
+				<form action="{{ url_for('playsound') }}" method="POST">
+					<div class="mb-3">						
+						<textarea class="form-control" id="control-msg" name="control-msg" rows="3"></textarea>
+					</div>
+					<div class="float-end">
+						<button type="submit" class="btn btn-secondary">Enviar</button>
+					</div>
+					<div class="clearfix"></div>
+				</form>				
 			</div>
 		  </div>
 		</div>

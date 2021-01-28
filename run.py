@@ -12,15 +12,15 @@ def home() :
 
 @app.route('/voz',methods=["GET","POST"])
 def playsound():
-    if request.method == 'GET':
-        return render_template('voz.html')
-    logging.warning('Requisição: {}'.format(request.form))
-    #text = request.values.get("control-msg")
-    text = request.form.get("control-msg")
-    #text = request.values.get("text")
+    #if request.method == 'GET':
+    #    return render_template('voz.html')
+    logging.warning('Requisição: {}'.format(request.form))    
+    text = request.form.get("control-msg")    
     MyOut1 = subprocess.call(f'''termux-volume music 15''', shell=True)
     MyOut = subprocess.call(f'''termux-tts-speak {text}''', shell=True)
-    return render_template("index.html")
+    #return render_template("index.html")
+    return home()
+    #return welcome('Marlon')
 
 @app.route('/welcome/<name>')
 def welcome(name=None):
