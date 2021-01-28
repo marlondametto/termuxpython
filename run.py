@@ -22,9 +22,19 @@ def playsound():
     return home()
     #return welcome('Marlon')
 
-@app.route('/welcome/<name>')
-def welcome(name=None):
-    return render_template('welcome.html', name=name)
+@app.route('/sms', methods=['GET','POST'])
+def sendsms():
+    if request.method == 'GET':
+        return render_template('index.html')
+    number = request.form.get('fonenumber')
+    text = request.form.get('message')
+    logging.warning('SMS: {}'.format(request.form)) 
+    logging.warning('SMS: {}'.format(number))
+    logging.warning('SMS: {}'.format(text))
+    
+    MyOut = subprocess.call(f'''termux-sms-send -n {number} {text}''', shell=True)  
+    
+    return home()
 
 if __name__ =='__main__':
     app.run(debug=True)
