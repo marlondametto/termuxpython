@@ -1,11 +1,15 @@
 import logging
 import subprocess
-
+from flask.helpers import make_response
+import matplotlib
+import os
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
-
+from sklearn.linear_model import LinearRegression
 import pandas
-from flask import (Flask, jsonify, redirect, render_template, request, session,
+from flask.json import jsonify
+from flask import (Flask, json, redirect, render_template, request, session,
                    url_for)
 from flask_bootstrap import Bootstrap
 
@@ -52,5 +56,66 @@ def loadData():
         return base.head().to_json()        
     except Exception as e:
         return redirect(url_for('main'))
+
+#Seção 22 - Regressão linear simples
+@app.route('/linearRegression', methods=['POST'])
+def linearRegression():
+    try:        
+        distancia = request.form.get('distancia')        
+        response = dict([('distancia', distancia)])
+
+        #Carrega planilha de dados
+        base = pandas.read_csv('./static/cars.csv')
+        base = base.drop(['Unnamed: 0'], axis = 1)
+        x = base.iloc[:, 0].values #distância
+        y = base.iloc[:, 1].values #velocidade
+
+        #Correlação
+        #Correlações próximas de 1 são fortes. Podem ser positivas ou negativas
+        correlacao = numpy.corrcoef(x, y)
+        response['correlacao'] = correlacao[0][1]        
+
+        dirname = os.path.dirname(__file__)
+    
+        #Regressão
+        x = x.reshape(-1, 1)
+        modelo = LinearRegression()
+        modelo.fit(x, y)
+
+        #Criação do gráfico para visualização
+        # filename = os.path.join(dirname, r'static/graphics/scatter.png')
+        filename = r'./{}'.format(url_for('static', filename='scatter.png'))
+        print(filename)        
+        plt.scatter(x, y)
+        plt.plot(x, modelo.predict(x), color = "gray")
+        plt.savefig(filename, bbox_inches='tight')
+        response['scatter'] = filename
+
+        #Regressão com predição        
+        # filename = os.path.join(dirname, r'static/graphics/scatterpred.png')
+        filename = r'./{}'.format(url_for('static', filename='scatterpred.png'))
+        x = x.reshape(-1, 1)
+        modelo = LinearRegression()
+        modelo.fit(x, y) 
+
+        #Transforma m em ft
+        feet = float(distancia) / 0.3048
+
+        p = modelo.predict([[feet]])
+        convertido = numpy.array(p, dtype=numpy.float32)
+        response['predicao'] = str(convertido[0])
+
+        plt.scatter(x, y)
+        plt.plot(x, modelo.predict(x), color = "gray")
+        plt.savefig(filename, bbox_inches='tight')
+        response['scatter1'] = filename
+
+        #print(response)
+
+        return render_template("linearRegression.html", data=response)
+        
+    except Exception as e:
+        return 'Mensagem: {}'.format(e)
+
 if __name__ =='__main__':
     app.run(debug=True)

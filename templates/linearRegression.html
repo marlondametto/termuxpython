@@ -1,0 +1,75 @@
+{% extends "base.html"  %}
+{% block title %}Regressão Linear Simples{% endblock %}
+{% block content %}
+<div class="container">	
+		<h3>Regressão Linear Simples</h3>	
+	<!-- {%print(data)%} -->
+	<ul>
+		<div class="row">
+		{% for key, value in data.items() %}
+		<!-- <dt>{{key}}</dt> -->
+		<!-- <dd>{{value}}</dd> -->
+			{% if 'distancia' == key %}				
+				<div class="col-sm-4">
+					<div class="card">
+						<img src="static/cardHeaderStop.jpg" class="card-img-top" alt="correlacao">
+						<div class="card-body">
+							<h5 class="card-title">Distância da freada</h5>
+							<p class="card-text">
+								A predição da velocidade do veículo é calculada a partir da distância informada.
+							</p>
+							<p class="card-text">
+								<strong>DISTÂNCIA: {{value}} m</strong>
+							</p>								
+						</div>
+					</div>
+				</div>
+			{% endif %}
+
+			{% if 'correlacao' == key %}
+				<div class="col-sm-4">
+					<div class="card">
+						<img src="static/cardHeaderMaths.jpg" class="card-img-top" alt="correlacao">
+						<div class="card-body">
+							<h5 class="card-title">Correlação</h5>
+							<p class="card-text">
+								A correlação mostra o relacionamento entre os dados.
+								Neste caso, a relação entre a distância da freada e a velocidade a qual o veículo se encontrava.
+								Correlações podem ser positivas ou negativas e quanto mais próximas de 1, significa que a correlação é mais forte.							
+							</p>
+							<p class="card-text">
+								<strong>CORRELAÇÃO: {{value}}</strong>
+							</p>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+
+			{% if 'predicao' == key %}
+				<div class="col-sm-4">
+					<div class="card">
+						<img src="static/cardHeaderCar.jpg" class="card-img-top" alt="predicao">
+						<div class="card-body">
+							<h5 class="card-title">Predição da velocidade</h5>
+							<p class="card-text">
+								Velocidade em que o veículo estava baseado no modelo e na distância informada
+							</p>
+							<p class="card-text">
+								<strong>PREDIÇÃO: {{value|float * 1.609344}} KM/h</strong>
+							</p>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+		</div>
+	</ul>
+
+	<h5>Gráfico de dispersao (mph x ft)</h5>
+	{% for key, value in data.items() %}
+		{% if 'scatter' == key %}									
+			<img src={{value}} class="img-fluid" width="400" height="300" alt='scatter'>				
+		{% endif %}
+	{% endfor %}
+</div>
+{% endblock %}

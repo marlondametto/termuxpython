@@ -85,25 +85,31 @@
 				<table class="table table-sm border rounded">
 					<thead">
 						<tr class="alinhamento">
-							<th scope="col">Distância</th>
 							<th scope="col">Velocidade</th>
+							<th scope="col">Distância</th>
 						</tr>
 					</thead>
 					<tbody class="alinhamento" id='shape'></tbody>
 				</table>
+
+				<br/>
+
+				<form action="{{ url_for('linearRegression') }}" method="POST">
+					<div class="mb-3">						
+						<input type="text" class="form-control" id="distancia" name="distancia" placeholder="Distância da freada (metros)">
+					</div>
+					<div class="float-end">
+						<button type="submit" class="btn btn-secondary">Prever</button>
+					</div>
+					<div class="clearfix"></div>
+				</form>	
 				
 				<script type='text/javascript'>
 					$(function(){
 						$.getJSON('/loadData',{
 							name: $('#simples').val(),
 						}, 
-						function(data) {	
-														
-							//var obj = data['dist'];
-							//var t = JSON.stringify(obj);
-							//console.log(t.length);
-							//var z = JSON.parse(t);
-							//console.log(z);
+						function(data) {
 							console.log(data);
 							console.log(data.dist[0]);
 
@@ -111,37 +117,17 @@
 								
 								var newRow = $('<tr>');
 								var cols = '';
-								cols += '<td>'+data['dist'][i]+'</td>';
-								cols += '<td>'+data['speed'][i]+'</td>';
+
+								// Na planilha está invertido a distância com a velocidade
+								cols += '<td>'+Math.round((data['dist'][i]) * 1.609344)+' KM/h</td>';
+								cols += '<td>'+(data['speed'][i] * 0.3048)+' m</td>';
 								newRow.append(cols);
 								$('#shape').append(newRow);
-								/* $('#shape > tbody')
-								.append('<tr>')
-								.html(									
-									'<td>'+data['dist'][i]+'</td>'
-									+'<td>'+data['speed'][i]+'</td>'
-								) */
-
-
 							};
-							
-
-							/* for(i in data['dist'])
-							{
-								console.log('Teste');
-								$('#shape > tbody:last-child')
-								.append('<tr>')
-								.html(									
-									'<td>'+data['dist'][i]+'</td>'
-									+'<td>'+data['speed'][i]+'</td>'
-								)
-							} */
 						});
 						return false;
 					});
 				</script>
-				
-				
 			</div>
 		  </div>
 		</div>
