@@ -1,10 +1,10 @@
 import logging
 import subprocess
 from flask.helpers import make_response
-import matplotlib
+#import matplotlib
 import os
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+#matplotlib.use('Agg')
+#import matplotlib.pyplot as plt
 import numpy
 from sklearn.linear_model import LinearRegression
 import pandas
@@ -82,17 +82,14 @@ def linearRegression():
         modelo = LinearRegression()
         modelo.fit(x, y)
 
-        #Criação do gráfico para visualização
-        # filename = os.path.join(dirname, r'static/graphics/scatter.png')
-        filename = r'./{}'.format(url_for('static', filename='scatter.png'))
-        print(filename)        
-        plt.scatter(x, y)
-        plt.plot(x, modelo.predict(x), color = "gray")
-        plt.savefig(filename, bbox_inches='tight')
+        #Criação do gráfico para visualização        
+        filename = r'./{}'.format(url_for('static', filename='scatter.png'))             
+        # plt.scatter(x, y)
+        # plt.plot(x, modelo.predict(x), color = "gray")
+        # plt.savefig(filename, bbox_inches='tight')
         response['scatter'] = filename
 
-        #Regressão com predição        
-        # filename = os.path.join(dirname, r'static/graphics/scatterpred.png')
+        #Regressão com predição                
         filename = r'./{}'.format(url_for('static', filename='scatterpred.png'))
         x = x.reshape(-1, 1)
         modelo = LinearRegression()
@@ -105,9 +102,9 @@ def linearRegression():
         convertido = numpy.array(p, dtype=numpy.float32)
         response['predicao'] = str(convertido[0])
 
-        plt.scatter(x, y)
-        plt.plot(x, modelo.predict(x), color = "gray")
-        plt.savefig(filename, bbox_inches='tight')
+        # plt.scatter(x, y)
+        # plt.plot(x, modelo.predict(x), color = "gray")
+        # plt.savefig(filename, bbox_inches='tight')
         response['scatter1'] = filename
 
         #print(response)
