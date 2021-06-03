@@ -6,7 +6,7 @@ import os
 #matplotlib.use('Agg')
 #import matplotlib.pyplot as plt
 import numpy
-#from sklearn.linear_model import LinearRegression
+##from sklearn.linear_model import LinearRegression
 import pandas
 from flask.json import jsonify
 from flask import (Flask, json, redirect, render_template, request, session,
@@ -79,8 +79,8 @@ def linearRegression():
     
         #Regressão
         x = x.reshape(-1, 1)
-        modelo = LinearRegression()
-        modelo.fit(x, y)
+        ##modelo = LinearRegression()
+        ##modelo.fit(x, y)
 
         #Criação do gráfico para visualização        
         filename = r'./{}'.format(url_for('static', filename='scatter.png'))             
@@ -93,7 +93,7 @@ def linearRegression():
         filename = r'./{}'.format(url_for('static', filename='scatterpred.png'))
         x = x.reshape(-1, 1)
         ##modelo = LinearRegression()
-        #modelo.fit(x, y) 
+        ##modelo.fit(x, y) 
 
         #Transforma m em ft
         feet = float(distancia) / 0.3048
