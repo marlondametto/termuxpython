@@ -13,5 +13,17 @@
 
 h1{
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	color: "gray";
+	color: gray;
+}
+
+p{
+	font-family: 'Calibri', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: gray;
+}
+
+h1, h2, h3, h4, h5{
+	color:gray;
+}
+table, th, td, tr{	
+	color: gray;
 }

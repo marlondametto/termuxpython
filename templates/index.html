@@ -6,7 +6,7 @@
 	<div class="accordion" id="accordMenu">
 		<div class="accordion-item">
 		  <h2 class="accordion-header" id="headingOne">
-			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-megaphone-fill" viewBox="0 0 16 16">
 					<path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-11zm-1 .724c-2.067.95-4.539 1.481-7 1.656v6.237a25.222 25.222 0 0 1 1.088.085c2.053.204 4.038.668 5.912 1.56V3.224zm-8 7.841V4.934c-.68.027-1.399.043-2.008.053A2.02 2.02 0 0 0 0 7v2c0 1.106.896 1.996 1.994 2.009a68.14 68.14 0 0 1 .496.008 64 64 0 0 1 1.51.048zm1.39 1.081c.285.021.569.047.85.078l.253 1.69a1 1 0 0 1-.983 1.187h-.548a1 1 0 0 1-.916-.599l-1.314-2.48a65.81 65.81 0 0 1 1.692.064c.327.017.65.037.966.06z"/>
 				</svg>
@@ -14,7 +14,7 @@
 				Texto para voz
 			</button>
 		  </h2>
-		  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordMenu">
+		  <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordMenu">
 			<div class="accordion-body">
 				<p>Envie uma mensagem que será lida em voz alta pelo smartphone.</p>
 				<form action="{{ url_for('playsound') }}" method="POST">
@@ -78,30 +78,34 @@
 				<p>
 					<strong>Exercício de regressão linear</strong>
 				</p>
-				<p>Uma planilha guarda informações que mostra a relação entre a velocidade de um determinado veículo e o tamanho de sua frenagem.</p>
+				<p>Uma planilha guarda informações que mostram a relação entre a velocidade de um determinado veículo e o tamanho de sua frenagem.</p>
 				<p>Com essas informações, pode-se tentar determinar a que velocidade o veículo estava no momento da frenagem.</p>
-				<h3>Amostra dos dados</h3>				
+				<h5>Pequena amostra dos dados</h5>				
 				
-				<table class="table table-sm border rounded">
-					<thead">
-						<tr class="alinhamento">
-							<th scope="col">Velocidade</th>
-							<th scope="col">Distância</th>
-						</tr>
-					</thead>
-					<tbody class="alinhamento" id='shape'></tbody>
-				</table>
-
+				<div class="col-md-4">
+					<table class="table table-responsive table-bordered table-sm">
+						<thead">
+							<tr class="alinhamento bg-light">
+								<th scope="col">Velocidade</th>
+								<th scope="col">Distância</th>
+							</tr>
+						</thead>
+						<tbody class="alinhamento" id='shape'></tbody>
+					</table>
+				</div>
 				<br/>
 
 				<form action="{{ url_for('linearRegression') }}" method="POST">
-					<div class="mb-3">						
+					<!-- <div class="mb-3">-->
+					<div class="row row-cols-md-auto">
+					<div class="col-md-3">
 						<input type="text" class="form-control" id="distancia" name="distancia" placeholder="Distância da freada (metros)">
+						
 					</div>
-					<div class="float-end">
-						<button type="submit" class="btn btn-secondary">Prever</button>
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-secondary float-end">Prever</button>
 					</div>
-					<div class="clearfix"></div>
+					</div>
 				</form>	
 				
 				<script type='text/javascript'>
@@ -117,10 +121,9 @@
 								
 								var newRow = $('<tr>');
 								var cols = '';
-
-								// Na planilha está invertido a distância com a velocidade
-								cols += '<td>'+Math.round((data['dist'][i]) * 1.609344)+' KM/h</td>';
-								cols += '<td>'+(data['speed'][i] * 0.3048)+' m</td>';
+								
+								cols += '<td>'+Math.round((data['speed'][i]) * 1.609344)+' KM/h</td>';
+								cols += '<td>'+(data['dist'][i] * 0.3048)+' m</td>';
 								newRow.append(cols);
 								$('#shape').append(newRow);
 							};

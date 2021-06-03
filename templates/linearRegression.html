@@ -14,7 +14,7 @@
 					<div class="card">
 						<img src="static/cardHeaderStop.jpg" class="card-img-top" alt="correlacao">
 						<div class="card-body">
-							<h5 class="card-title">Distância da freada</h5>
+							<h5 class="card-title">Comprimento da frenagem</h5>
 							<p class="card-text">
 								A predição da velocidade do veículo é calculada a partir da distância informada.
 							</p>
@@ -55,7 +55,7 @@
 								Velocidade em que o veículo estava baseado no modelo e na distância informada
 							</p>
 							<p class="card-text">
-								<strong>PREDIÇÃO: {{value|float * 1.609344}} KM/h</strong>
+								<strong>PREDIÇÃO: {{(value|float * 1.609344)|round(2)}} KM/h</strong>
 							</p>
 						</div>
 					</div>

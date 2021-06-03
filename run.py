@@ -67,8 +67,8 @@ def linearRegression():
         #Carrega planilha de dados
         base = pandas.read_csv('./static/cars.csv')
         base = base.drop(['Unnamed: 0'], axis = 1)
-        x = base.iloc[:, 0].values #distância
-        y = base.iloc[:, 1].values #velocidade
+        x = base.iloc[:, 1].values #distância
+        y = base.iloc[:, 0].values #velocidade
 
         #Correlação
         #Correlações próximas de 1 são fortes. Podem ser positivas ou negativas
