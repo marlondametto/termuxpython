@@ -6,7 +6,7 @@ import os
 #matplotlib.use('Agg')
 #import matplotlib.pyplot as plt
 import numpy
-##from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression
 import pandas
 from flask.json import jsonify
 from flask import (Flask, json, redirect, render_template, request, session,
