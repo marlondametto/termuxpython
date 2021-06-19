@@ -1,7 +1,7 @@
 import logging
 import subprocess
 from flask.helpers import make_response
-#import matplotlib
+import matplotlib
 import os
 #matplotlib.use('Agg')
 #import matplotlib.pyplot as plt
