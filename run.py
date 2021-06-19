@@ -29,22 +29,27 @@ def playsound():
     MyOut1 = subprocess.call(f'''termux-volume music 15''', shell=True)
     MyOut = subprocess.call(f'''termux-tts-speak {text}''', shell=True)
     #return render_template("index.html")
-    return redirect(url_for('main'))
+    return redirect(url_for('home'))
     #return welcome('Marlon')
+
+
+
 
 @app.route('/sms', methods=['GET','POST'])
 def sendsms():
+
     if request.method == 'GET':
         return render_template('index.html')
+    
     number = request.form.get('fonenumber')
     text = request.form.get('message')
     logging.warning('SMS: {}'.format(request.form)) 
     logging.warning('SMS: {}'.format(number))
-    logging.warning('SMS: {}'.format(text))
-    
-    MyOut = subprocess.call(f'''termux-sms-send -n {number} {text}''', shell=True)  
-    
-    return redirect(url_for('main'))
+    logging.warning('SMS: {}'.format(text))    
+    MyOut = subprocess.call(f'''termux-sms-send -n {number} {text}''', shell=True)      
+    return redirect(url_for('home'))
+
+
 
 @app.route('/loadData')
 def loadData():
