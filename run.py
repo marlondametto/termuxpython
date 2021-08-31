@@ -120,5 +120,13 @@ def linearRegression():
     except Exception as e:
         return 'Mensagem: {}'.format(e)
 
+@app.route('/gps', methods=['GET'])
+def gps():
+    try:
+        MyOut = subprocess.call(f'''termux-location''', shell=True)
+        return render_template('gps.html', data=MyOut)
+    except Exception as e:
+        return 'Erro: {}'.format(e)        
+
 if __name__ =='__main__':
     app.run(debug=True)
