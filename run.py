@@ -1,5 +1,8 @@
+from datetime import time
 import logging
 import subprocess
+import threading
+import time
 from flask.helpers import make_response
 #import matplotlib
 import os
@@ -12,13 +15,16 @@ from flask.json import jsonify
 from flask import (Flask, json, redirect, render_template, request, session,
                    url_for)
 from flask_bootstrap import Bootstrap
+from pandas.io.parsers import TextParser
 
 app = Flask(__name__)
 Bootstrap(app)
 
+
 @app.route('/')
 def home() :                                        
     return render_template("index.html")
+
 
 @app.route('/voz',methods=["GET","POST"])
 def playsound():
@@ -31,8 +37,6 @@ def playsound():
     #return render_template("index.html")
     return redirect(url_for('home'))
     #return welcome('Marlon')
-
-
 
 
 @app.route('/sms', methods=['GET','POST'])
@@ -50,7 +54,6 @@ def sendsms():
     return redirect(url_for('home'))
 
 
-
 @app.route('/loadData')
 def loadData():
     try:
@@ -62,7 +65,8 @@ def loadData():
     except Exception as e:
         return redirect(url_for('main'))
 
-#Seção 22 - Regressão linear simples
+
+# Seção 22 - Regressão linear simples
 @app.route('/linearRegression', methods=['POST'])
 def linearRegression():
     try:        
@@ -120,13 +124,45 @@ def linearRegression():
     except Exception as e:
         return 'Mensagem: {}'.format(e)
 
+
 @app.route('/gps', methods=['GET'])
 def gps():
     try:
-        MyOut = subprocess.call(f'''termux-location''', shell=True)
-        return render_template('gps.html', data=MyOut)
+        
+        # return render_template('gps.html', data=MyOut)
+        global getDataGps
+        getDataGps=True
+        global x
+        x=threading.Thread(target=getLocation, args=(1,))        
+        x.start()
+        return render_template('gps.html', data='Thread ativada')
+
     except Exception as e:
         return 'Erro: {}'.format(e)        
+
+@app.route('/gpsStop', methods=['GET'])
+def gpsStop():
+    try:
+        global getDataGps
+        getDataGps=False
+        global x
+        x.join()
+        return render_template('gps.html', data='Thread desativada')
+    except Exception as e:
+        return 'Erro: {}'.format(e)
+
+def getLocation(param):
+    try:
+        while True:            
+            # myOut = subprocess.call(f'''termux-location''', shell=True)
+            myOut = 'Accessing GPS'
+            print(myOut)
+            time.sleep(5)
+            if not getDataGps:
+                break
+
+    except Exception as e:
+        print('Erro: {}'.format(e))
 
 if __name__ =='__main__':
     app.run(debug=True)

@@ -144,17 +144,22 @@
 				</button>
 			</h2>
 			<div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordMenu">
-			  <div class="accordion-body">
-				  <p>Visualizar rotas percorridas</p>
-				  <form action="{{ url_for('gps') }}" method="GET">
-					  
-					  <div class="float-end">
-						  <button type="submit" class="btn btn-secondary">Ir</button>
-					  </div>
-					  <div class="clearfix"></div>
-					  
-				  </form>				
-			  </div>
+				<div class="accordion-body">
+					<p>Visualizar rotas percorridas</p>
+					<form-inline>
+						<form action="{{ url_for('gps') }}" method="GET">
+							<div class="float-end">
+								<button type="submit" class="btn btn-secondary">Iniciar</button>
+							</div>
+						</form>
+						<form action="{{ url_for('gpsStop') }}" method="GET">
+							<div class="float-end">
+								<button type="submit" class="btn btn-secondary">Parar</button>
+							</div>
+						</form>
+						<div class="clearfix"></div>
+					</form-inline>
+				</div>
 			</div>
 		  </div>
 
