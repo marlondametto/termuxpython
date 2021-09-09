@@ -17,6 +17,9 @@ from flask import (Flask, json, redirect, render_template, request, session,
 from flask_bootstrap import Bootstrap
 from pandas.io.parsers import TextParser
 
+import sqlite3
+from sqlite3 import Error
+
 app = Flask(__name__)
 Bootstrap(app)
 
@@ -153,8 +156,9 @@ def gpsStop():
 
 def getLocation(param):
     try:
+        c = createConnection('location.db')
         while True:            
-            # myOut = subprocess.call(f'''termux-location''', shell=True)
+            myOut = subprocess.call(f'''termux-location''', shell=True)
             myOut = 'Accessing GPS'
             print(myOut)
             time.sleep(5)
@@ -163,6 +167,21 @@ def getLocation(param):
 
     except Exception as e:
         print('Erro: {}'.format(e))
+
+
+def createConnection(dbFile):
+    """create a SQLite database connection"""
+    conn=None
+    try:
+        conn=sqlite3.connect(dbFile)
+        print("Conectado a Sqlite3 {}".format(sqlite3.version))
+    except Error as e:
+        print(e)
+    # finally:
+    #     if conn:
+    #         conn.close()
+    return conn
+
 
 if __name__ =='__main__':
     app.run(debug=True)
