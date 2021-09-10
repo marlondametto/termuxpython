@@ -175,12 +175,34 @@ def createConnection(dbFile):
     try:
         conn=sqlite3.connect(dbFile)
         print("Conectado a Sqlite3 {}".format(sqlite3.version))
+
+        # sql criação de tabelas
+        sql = '''CREATE TABLE IF NOT EXISTS location(
+            LATITUDE TEXT NOT NULL
+            ,LONGITUDE TEXT NOT NULL,
+            ,ALTITUDE REAL
+            ,SPEED REAL);'''
+        if conn is not None:
+            createTable(conn, sql)
+
     except Error as e:
         print(e)
     # finally:
     #     if conn:
     #         conn.close()
     return conn
+
+
+def createTable(conn, sql):
+    '''Create table in Sqlite database file
+    :param conn: Connection oject
+    :param sql: DDL sql command
+    '''
+    try:
+        c = conn.cursor()
+        c.execute(sql)
+    except Error as e:
+        print(e)
 
 
 if __name__ =='__main__':
