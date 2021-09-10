@@ -158,10 +158,13 @@ def getLocation(param):
     try:
         c = createConnection('location.db')
         while True:            
+
             myOut = subprocess.call(f'''termux-location''', shell=True)
             myOut = 'Accessing GPS'
-            print(myOut)
+            # print(myOut)
             time.sleep(5)
+            insertData(c, myOut)
+
             if not getDataGps:
                 break
 
@@ -177,7 +180,7 @@ def createConnection(dbFile):
         print("Conectado a Sqlite3 {}".format(sqlite3.version))
 
         # sql criação de tabelas
-        sql = '''CREATE TABLE IF NOT EXISTS location(
+        sql = '''CREATE TABLE IF NOT EXISTS LOCATION(
             LATITUDE TEXT NOT NULL
             ,LONGITUDE TEXT NOT NULL,
             ,ALTITUDE REAL
@@ -204,6 +207,22 @@ def createTable(conn, sql):
     except Error as e:
         print(e)
 
+def insertData(conn, gpsData):
+    '''Insert data from gps to a Sqlite database file
+    :param conn: Connection object
+    :param gpsData: Json data from GPS
+    '''
+    try:
+        sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED)
+            VALUES(?,?,?,?)'''
+        print(gpsData)
+        loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'])
+        print(loc)
+        cur=conn.cursor()
+        cur.execute(sql,loc)
+        conn.commit()
+    except Error as e:
+        print(e)
 
 if __name__ =='__main__':
     app.run(debug=True)
