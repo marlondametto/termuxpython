@@ -160,9 +160,9 @@ def getLocation(param):
         while True:            
 
             myOut = subprocess.call(f'''termux-location''', shell=True)            
-            # print(myOut)
-            time.sleep(5)
+            logging.warning("termux-location: {}".format(myOut))            
             insertData(c, myOut)
+            time.sleep(5)
 
             if not getDataGps:
                 break
@@ -214,9 +214,9 @@ def insertData(conn, gpsData):
     try:
         sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED)
             VALUES(?,?,?,?)'''
-        print(gpsData)
+        logging.warning("gpsData {}".format(gpsData))
         loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'])
-        print(loc)
+        logging.warning("loc {}".format(loc))
         cur=conn.cursor()
         cur.execute(sql,loc)
         conn.commit()
