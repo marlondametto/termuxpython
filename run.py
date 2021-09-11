@@ -16,7 +16,7 @@ from flask import (Flask, json, redirect, render_template, request, session,
                    url_for)
 from flask_bootstrap import Bootstrap
 from pandas.io.parsers import TextParser
-
+import json
 import sqlite3
 from sqlite3 import Error
 
@@ -159,8 +159,7 @@ def getLocation(param):
         c = createConnection('location.db')
         while True:            
 
-            myOut = subprocess.call(f'''termux-location''', shell=True)
-            myOut = 'Accessing GPS'
+            myOut = subprocess.call(f'''termux-location''', shell=True)            
             # print(myOut)
             time.sleep(5)
             insertData(c, myOut)
