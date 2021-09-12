@@ -160,8 +160,8 @@ def getLocation(param):
         logging.warning("conexão ao sqlite criada")
         while True:            
 
-            myOut = subprocess.call(f'''termux-location -p network''', shell=True)
-            logging.warning(type(myOut))
+            myOut = subprocess.call(f'''termux-location -p network''', shell=False)
+            logging.warning("Tipo de dado: {}".format(type(myOut)))
             logging.warning("termux-location: {}".format(myOut))  
             insertData(c, myOut)
             time.sleep(5)
@@ -183,7 +183,7 @@ def createConnection(dbFile):
         # sql criação de tabelas
         sql = '''CREATE TABLE IF NOT EXISTS LOCATION(
             LATITUDE TEXT NOT NULL
-            ,LONGITUDE TEXT NOT NULL,
+            ,LONGITUDE TEXT NOT NULL
             ,ALTITUDE REAL
             ,SPEED REAL);'''
         if conn is not None:
