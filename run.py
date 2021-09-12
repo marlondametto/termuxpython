@@ -141,7 +141,7 @@ def gps():
         return render_template('gps.html', data='Thread ativada')
 
     except Exception as e:
-        return 'Erro: {}'.format(e)        
+        return 'Erro em gps: {}'.format(e)        
 
 @app.route('/gpsStop', methods=['GET'])
 def gpsStop():
@@ -152,14 +152,16 @@ def gpsStop():
         x.join()
         return render_template('gps.html', data='Thread desativada')
     except Exception as e:
-        return 'Erro: {}'.format(e)
+        return 'Erro em gpsStop: {}'.format(e)
 
 def getLocation(param):
     try:
         c = createConnection('location.db')
+        logging.warning("conexão ao sqlite criada")
         while True:            
 
-            myOut = subprocess.call(f'''termux-location -p network''', shell=True)            
+            myOut = subprocess.call(f'''termux-location -p network''', shell=True)
+            logging.warning(type(myOut))
             logging.warning("termux-location: {}".format(myOut))  
             insertData(c, myOut)
             time.sleep(5)
@@ -168,7 +170,7 @@ def getLocation(param):
                 break
 
     except Exception as e:
-        print('Erro: {}'.format(e))
+        print('Erro em getLocation: {}'.format(e))
 
 
 def createConnection(dbFile):
@@ -186,9 +188,10 @@ def createConnection(dbFile):
             ,SPEED REAL);'''
         if conn is not None:
             createTable(conn, sql)
+            logging.warning("tabela criada: {}".format(sql))
 
     except Error as e:
-        print(e)
+        print("Erro em createConnection: {}".format(e))
     # finally:
     #     if conn:
     #         conn.close()
@@ -204,7 +207,7 @@ def createTable(conn, sql):
         c = conn.cursor()
         c.execute(sql)
     except Error as e:
-        print(e)
+        print("Erro em createTable: {}".format(e))
 
 def insertData(conn, gpsData):
     '''Insert data from gps to a Sqlite database file
@@ -220,8 +223,9 @@ def insertData(conn, gpsData):
         cur=conn.cursor()
         cur.execute(sql,loc)
         conn.commit()
+        logging.warning("Inserção de dados finalizada")
     except Error as e:
-        print(e)
+        print("Erro em insertData".format(e))
 
 if __name__ =='__main__':
     app.run(debug=True)
