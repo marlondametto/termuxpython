@@ -160,7 +160,7 @@ def getLocation(param):
         logging.warning("conexão ao sqlite criada")
         while True:            
 
-            myOut = subprocess.call(f'''termux-location -p network''', shell=True)
+            myOut = subprocess.check_output(f'''termux-location -p network''', shell=True)
             logging.warning("Tipo de dado: {}".format(type(myOut)))
             logging.warning("termux-location: {}".format(myOut))  
             insertData(c, myOut)
