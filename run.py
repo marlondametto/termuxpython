@@ -163,7 +163,10 @@ def getLocation(param):
             myOut = subprocess.check_output(f'''termux-location -p network''', shell=True)
             logging.warning("Tipo de dado: {}".format(type(myOut)))
             logging.warning("termux-location: {}".format(myOut))  
-            insertData(c, myOut)
+            transformed=myOut.decode('utf-8')
+            myJson=json.loads(transformed)
+            logging.warning("Tipo de dado: {}".format(type(myJson)))
+            insertData(c, myJson)
             time.sleep(5)
 
             if not getDataGps:
