@@ -159,9 +159,8 @@ def getLocation(param):
         c = createConnection('location.db')
         while True:            
 
-            myOut = subprocess.call(f'''termux-location''', shell=True)            
+            myOut = subprocess.call(f'''termux-location -p network''', shell=True)            
             logging.warning("termux-location: {}".format(myOut))  
-            print("termux-location: {}".format(myOut))          
             insertData(c, myOut)
             time.sleep(5)
 
