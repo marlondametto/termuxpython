@@ -1,6 +1,7 @@
 from datetime import time
 import logging
 import subprocess
+import signal
 import threading
 import time
 from flask.helpers import make_response
@@ -167,6 +168,7 @@ def getLocation(param):
             myJson=json.loads(transformed)
             logging.warning("Tipo de dado: {}".format(type(myJson)))
             insertData(c, myJson)
+            myOut.send_signal(signal.SIGINT)
             time.sleep(5)
 
             if not getDataGps:
