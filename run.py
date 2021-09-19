@@ -168,10 +168,10 @@ def getLocation(param):
                 transformed=myOut.decode('utf-8')
                 myJson=json.loads(transformed)
                 logging.warning("Tipo de dado: {}".format(type(myJson)))
-                insertData(c, myJson)
+                # insertData(c, myJson)
             except Exception:
                 pass
-            
+
             time.sleep(5)
 
             if not getDataGps:
