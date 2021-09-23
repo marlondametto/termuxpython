@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import datetime
 import logging
 import subprocess
 import signal
@@ -157,6 +157,8 @@ def gpsStop():
 
 def getLocation(param):
     try:
+        now = datetime.now()
+        logging.warning(f"Data:{now}")
         c = createConnection('location.db')
         logging.warning("conexão ao sqlite criada")
         while True:            
@@ -193,7 +195,8 @@ def createConnection(dbFile):
             LATITUDE TEXT NOT NULL
             ,LONGITUDE TEXT NOT NULL
             ,ALTITUDE REAL
-            ,SPEED REAL);'''
+            ,SPEED REAL
+            ,DATA TIMESTAMP NOT NULL);'''
         if conn is not None:
             createTable(conn, sql)
             logging.warning("tabela criada: {}".format(sql))
@@ -223,10 +226,12 @@ def insertData(conn, gpsData):
     :param gpsData: Json data from GPS
     '''
     try:
+        now = datetime.now()
+        logging.warning(f"Data:{now}")
         sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED)
-            VALUES(?,?,?,?)'''
+            VALUES(?,?,?,?,?)'''
         logging.warning("gpsData {}".format(gpsData))
-        loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'])
+        loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'],now)
         logging.warning("loc {}".format(loc))
         cur=conn.cursor()
         cur.execute(sql,loc)
