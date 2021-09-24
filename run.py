@@ -228,7 +228,7 @@ def insertData(conn, gpsData):
     try:
         now = datetime.now()
         logging.warning(f"Data:{now}")
-        sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED)
+        sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED,DATA)
             VALUES(?,?,?,?,?)'''
         logging.warning("gpsData {}".format(gpsData))
         loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'],now)
