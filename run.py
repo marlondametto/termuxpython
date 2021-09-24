@@ -157,21 +157,21 @@ def gpsStop():
 
 def getLocation(param):
     try:
-        now = datetime.now()
-        logging.warning(f"Data:{now}")
         c = createConnection('location.db')
         logging.warning("conexão ao sqlite criada")
         while True:            
 
             myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
+            # myOut = {'latitude': 123,'longitude': 123,'altitude': 123,'speed': 123,'data':f'{datetime.now()}'}
             logging.warning("Tipo de dado: {}".format(type(myOut)))
             logging.warning("termux-location: {}".format(myOut))  
             try:
                 transformed=myOut.decode('utf-8')
+                # transformed = json.dumps(myOut)
                 myJson=json.loads(transformed)
                 logging.warning("Tipo de dado: {}".format(type(myJson)))
                 insertData(c, myJson)
-            except Exception:
+            except Error as e:
                 pass
 
             time.sleep(5)
@@ -226,19 +226,17 @@ def insertData(conn, gpsData):
     :param gpsData: Json data from GPS
     '''
     try:
-        now = datetime.now()
-        logging.warning(f"Data:{now}")
         sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED,DATA)
             VALUES(?,?,?,?,?)'''
         logging.warning("gpsData {}".format(gpsData))
-        loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'],now)
+        loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'],datetime.now())
         logging.warning("loc {}".format(loc))
         cur=conn.cursor()
         cur.execute(sql,loc)
         conn.commit()
         logging.warning("Inserção de dados finalizada")
     except Error as e:
-        print("Erro em insertData".format(e))
+        print("Erro em insertData {}".format(e))
 
 if __name__ =='__main__':
     app.run(debug=True)
