@@ -1,7 +1,6 @@
 from datetime import datetime
 import logging
 import subprocess
-import signal
 import threading
 import time
 from flask.helpers import make_response
@@ -20,10 +19,12 @@ from pandas.io.parsers import TextParser
 import json
 import sqlite3
 from sqlite3 import Error
+import math
 
 app = Flask(__name__)
 Bootstrap(app)
 
+local = 'computador'
 
 @app.route('/')
 def home() :                                        
@@ -155,19 +156,22 @@ def gpsStop():
     except Exception as e:
         return 'Erro em gpsStop: {}'.format(e)
 
-def getLocation(param):
+def getLocation(param):    
     try:
         c = createConnection('location.db')
         logging.warning("conexão ao sqlite criada")
         while True:            
-
-            myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
-            # myOut = {'latitude': 123,'longitude': 123,'altitude': 123,'speed': 123,'data':f'{datetime.now()}'}
+            if local == 'celular':
+                myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
+            else:
+                myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
             logging.warning("Tipo de dado: {}".format(type(myOut)))
             logging.warning("termux-location: {}".format(myOut))  
             try:
-                transformed=myOut.decode('utf-8')
-                # transformed = json.dumps(myOut)
+                if local == 'celular':
+                    transformed=myOut.decode('utf-8')
+                else:
+                    transformed=json.dumps(myOut)
                 myJson=json.loads(transformed)
                 logging.warning("Tipo de dado: {}".format(type(myJson)))
                 insertData(c, myJson)
@@ -187,7 +191,8 @@ def createConnection(dbFile):
     """create a SQLite database connection"""
     conn=None
     try:
-        conn=sqlite3.connect(dbFile)
+        conn=sqlite3.connect(dbFile
+            ,detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
         print("Conectado a Sqlite3 {}".format(sqlite3.version))
 
         # sql criação de tabelas
@@ -200,14 +205,13 @@ def createConnection(dbFile):
         if conn is not None:
             createTable(conn, sql)
             logging.warning("tabela criada: {}".format(sql))
-
+        
     except Error as e:
         print("Erro em createConnection: {}".format(e))
     # finally:
     #     if conn:
     #         conn.close()
     return conn
-
 
 def createTable(conn, sql):
     '''Create table in Sqlite database file
@@ -238,5 +242,77 @@ def insertData(conn, gpsData):
     except Error as e:
         print("Erro em insertData {}".format(e))
 
+
+@app.route('/retrievData', methods=['GET'])
+def retrievData():
+    '''Retriev data from Sqlite database file
+    '''
+    data = datetime.now()
+    try:
+        sql=f'''SELECT * FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
+        conn=createConnection('location.db')
+        cur=conn.cursor()
+        cur.execute(sql)
+        result=cur.fetchall()
+        logging.warning(f"Resultado {result}")
+        conn.close()
+
+        # r=[row[i] for row in result for i in [0,1]]
+
+        
+        logging.warning(f'Teste 1 {result[0][4]}')
+        logging.warning(f'Teste 1 {result[0:1-2]}')
+
+        latitude=''
+        longitude=''
+        trajeto = []        
+        for res in result:
+            latitude=res[0]
+            longitude=res[1]
+            trajeto.append([latitude,longitude])
+        
+        i = 0
+        distance = 0.0
+        while i < len(trajeto) - 1:
+            distance += haversine(trajeto[i],trajeto[i+1])
+            i+=1
+
+        return render_template('gps.html', data=distance)
+
+        
+    except Error as e:
+        print("Erro em retrievData {}".format(e))
+
+def haversine(coord1, coord2):
+    
+    # Earth radius in meters
+    R = 6372800  
+    #R = 6371
+
+    la1, lo1 = coord1
+    la2, lo2 = coord2
+
+    lat1 = float(la1)
+    lon1 = float(lo1)
+    lat2 = float(la2)
+    lon2 = float(lo2)
+
+    logging.warning(f'harvesine lat1 {lat1}')
+    logging.warning(f'harvesine lon1 {lon1}')
+    logging.warning(f'harvesine lat2 {lat2}')
+    logging.warning(f'harvesine lon2 {lon2}')
+    
+    phi1, phi2 = math.radians(lat1), math.radians(lat2) 
+    dphi       = math.radians(lat2 - lat1)
+    dlambda    = math.radians(lon2 - lon1)
+    
+    a = math.sin(dphi/2)**2 + \
+        math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+    
+    res = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    logging.warning(f'Distância metros {res}')
+    res = res / 1000
+    return res * 1.609
 if __name__ =='__main__':
     app.run(debug=True)
