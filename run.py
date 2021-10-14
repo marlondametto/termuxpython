@@ -158,15 +158,14 @@ def gpsStop():
 
 def getLocation(param):    
     try:
-        c = createConnection('location.db')
-        logging.warning("conexão ao sqlite criada")
+        
         while True:            
             if local == 'celular':
                 myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
             else:
                 myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
             logging.warning("Tipo de dado: {}".format(type(myOut)))
-            logging.warning("termux-location: {}".format(myOut))  
+            logging.warning("termux-location: {}".format(myOut))
             try:
                 if local == 'celular':
                     transformed=myOut.decode('utf-8')
@@ -174,7 +173,7 @@ def getLocation(param):
                     transformed=json.dumps(myOut)
                 myJson=json.loads(transformed)
                 logging.warning("Tipo de dado: {}".format(type(myJson)))
-                insertData(c, myJson)
+
             except Error as e:
                 pass
 
@@ -224,12 +223,14 @@ def createTable(conn, sql):
     except Error as e:
         print("Erro em createTable: {}".format(e))
 
-def insertData(conn, gpsData):
+def insertData(gpsData):
     '''Insert data from gps to a Sqlite database file
     :param conn: Connection object
     :param gpsData: Json data from GPS
     '''
     try:
+        conn = createConnection('location.db')
+        logging.warning("conexão ao sqlite criada")
         sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED,DATA)
             VALUES(?,?,?,?,?)'''
         logging.warning("gpsData {}".format(gpsData))
@@ -274,10 +275,13 @@ def retrievData():
         i = 0
         distance = 0.0
         while i < len(trajeto) - 1:
-            distance += haversine(trajeto[i],trajeto[i+1])
+            dist = haversine(trajeto[i],trajeto[i+1])
+            if dist >= 1.0:
+                trajeto[i+1].append(dist)
+            # distance += haversine(trajeto[i],trajeto[i+1])
             i+=1
 
-        return render_template('gps.html', data=distance)
+        return render_template('gps.html', data=trajeto)
 
         
     except Error as e:
@@ -311,8 +315,10 @@ def haversine(coord1, coord2):
     
     res = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-    logging.warning(f'Distância metros {res}')
+    logging.warning(f'Distância milhas * 1000 {res}')
     res = res / 1000
     return res * 1.609
+
+
 if __name__ =='__main__':
     app.run(debug=True)
