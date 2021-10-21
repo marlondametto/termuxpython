@@ -20,6 +20,7 @@ import json
 import sqlite3
 from sqlite3 import Error
 import math
+import copy
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -173,7 +174,7 @@ def getLocation(param):
                     transformed=json.dumps(myOut)
                 myJson=json.loads(transformed)
                 logging.warning("Tipo de dado: {}".format(type(myJson)))
-
+                insertData(myJson)
             except Error as e:
                 pass
 
@@ -229,6 +230,14 @@ def insertData(gpsData):
     :param gpsData: Json data from GPS
     '''
     try:
+
+        # Verifica se existe diferença de 1km entre locais
+        ultima = retrievLastLocation()
+        atual = {gpsData['latitude'], gpsData['longitude']}
+        distancia = haversine(ultima, atual)
+        if distancia <= 1:
+            return
+
         conn = createConnection('location.db')
         logging.warning("conexão ao sqlite criada")
         sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED,DATA)
@@ -240,6 +249,7 @@ def insertData(gpsData):
         cur.execute(sql,loc)
         conn.commit()
         logging.warning("Inserção de dados finalizada")
+
     except Error as e:
         print("Erro em insertData {}".format(e))
 
@@ -248,6 +258,7 @@ def insertData(gpsData):
 def retrievData():
     '''Retriev data from Sqlite database file
     '''
+
     data = datetime.now()
     try:
         sql=f'''SELECT * FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
@@ -273,15 +284,14 @@ def retrievData():
             trajeto.append([latitude,longitude])
         
         i = 0
-        distance = 0.0
+        trajetoaux = copy.deepcopy(trajeto)        
         while i < len(trajeto) - 1:
             dist = haversine(trajeto[i],trajeto[i+1])
-            if dist >= 1.0:
-                trajeto[i+1].append(dist)
-            # distance += haversine(trajeto[i],trajeto[i+1])
+            if dist > 1:
+                trajetoaux[i+1].append(dist)
             i+=1
 
-        return render_template('gps.html', data=trajeto)
+        return render_template('gps.html', data=trajetoaux)
 
         
     except Error as e:
@@ -301,10 +311,10 @@ def haversine(coord1, coord2):
     lat2 = float(la2)
     lon2 = float(lo2)
 
-    logging.warning(f'harvesine lat1 {lat1}')
-    logging.warning(f'harvesine lon1 {lon1}')
-    logging.warning(f'harvesine lat2 {lat2}')
-    logging.warning(f'harvesine lon2 {lon2}')
+    logging.warning(f'haversine lat1 {lat1}')
+    logging.warning(f'haversine lon1 {lon1}')
+    logging.warning(f'haversine lat2 {lat2}')
+    logging.warning(f'haversine lon2 {lon2}')
     
     phi1, phi2 = math.radians(lat1), math.radians(lat2) 
     dphi       = math.radians(lat2 - lat1)
@@ -319,6 +329,26 @@ def haversine(coord1, coord2):
     res = res / 1000
     return res * 1.609
 
+def retrievLastLocation():
+    '''Retriev last location from database
+    '''
+    try:
+        sql = f'''SELECT * FROM LOCATION ORDER BY DATA DESC LIMIT 1 '''
+        conn = createConnection('location.db')
+        cur = conn.cursor()
+        cur.execute(sql)
+        result = cur.fetchall()
+
+        latitude=''
+        longitude=''
+        ultimo = []
+        for res in result:
+            latitude=res[0]
+            longitude=res[1]
+            ultimo = {latitude, longitude}
+        return ultimo
+    except Error as e:
+        print (f'Erro em retrievLastLocation: {e}')
 
 if __name__ =='__main__':
     app.run(debug=True)
