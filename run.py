@@ -25,7 +25,7 @@ import copy
 app = Flask(__name__)
 Bootstrap(app)
 
-local = 'computador'
+local = 'celular'
 
 @app.route('/')
 def home() :                                        
