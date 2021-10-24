@@ -165,15 +165,13 @@ def getLocation(param):
                 myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
             else:
                 myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
-            logging.warning("Tipo de dado: {}".format(type(myOut)))
-            logging.warning("termux-location: {}".format(myOut))
+            logging.warning(f"{datetime.now()} termux-location: {myOut}")
             try:
                 if local == 'celular':
                     transformed=myOut.decode('utf-8')
                 else:
                     transformed=json.dumps(myOut)
                 myJson=json.loads(transformed)
-                logging.warning("Tipo de dado: {}".format(type(myJson)))
                 insertData(myJson)
             except Error as e:
                 pass
@@ -204,7 +202,6 @@ def createConnection(dbFile):
             ,DATA TIMESTAMP NOT NULL);'''
         if conn is not None:
             createTable(conn, sql)
-            logging.warning("tabela criada: {}".format(sql))
         
     except Error as e:
         print("Erro em createConnection: {}".format(e))
@@ -237,18 +234,15 @@ def insertData(gpsData):
         distancia = haversine(ultima, atual)
         if distancia <= 1:
             return
-
+        
         conn = createConnection('location.db')
-        logging.warning("conexão ao sqlite criada")
         sql='''INSERT INTO LOCATION(LATITUDE,LONGITUDE,ALTITUDE,SPEED,DATA)
             VALUES(?,?,?,?,?)'''
-        logging.warning("gpsData {}".format(gpsData))
         loc=(gpsData['latitude'],gpsData['longitude'],gpsData['altitude'],gpsData['speed'],datetime.now())
-        logging.warning("loc {}".format(loc))
         cur=conn.cursor()
         cur.execute(sql,loc)
         conn.commit()
-        logging.warning("Inserção de dados finalizada")
+        logging.warning(f"{datetime.now()} Inserção de dados finalizada")
 
     except Error as e:
         print("Erro em insertData {}".format(e))
@@ -266,14 +260,9 @@ def retrievData():
         cur=conn.cursor()
         cur.execute(sql)
         result=cur.fetchall()
-        logging.warning(f"Resultado {result}")
         conn.close()
 
         # r=[row[i] for row in result for i in [0,1]]
-
-        
-        logging.warning(f'Teste 1 {result[0][4]}')
-        logging.warning(f'Teste 1 {result[0:1-2]}')
 
         latitude=''
         longitude=''
@@ -324,9 +313,8 @@ def haversine(coord1, coord2):
         math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
     
     res = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
-    logging.warning(f'Distância milhas * 1000 {res}')
     res = res / 1000
+    logging.warning(f"{datetime.now()} Distância em km: {res * 1.609}")
     return res * 1.609
 
 def retrievLastLocation():
