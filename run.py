@@ -25,8 +25,6 @@ import copy
 app = Flask(__name__)
 Bootstrap(app)
 
-local = 'celular'
-
 @app.route('/')
 def home() :                                        
     return render_template("index.html")
@@ -160,29 +158,25 @@ def gpsStop():
 def getLocation(param):    
     try:
         
-        while True:            
-            if local == 'celular':
+        while True:
+            try:            
                 myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
-            else:
+                transformed=myOut.decode('utf-8')
+            except Exception as er:
                 myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
-            logging.warning(f"{datetime.now()} termux-location: {myOut}")
-            try:
-                if local == 'celular':
-                    transformed=myOut.decode('utf-8')
-                else:
-                    transformed=json.dumps(myOut)
-                myJson=json.loads(transformed)
-                insertData(myJson)
-            except Error as e:
+                transformed=json.dumps(myOut)
                 pass
 
+            myJson=json.loads(transformed)
+            insertData(myJson)
+            
             time.sleep(5)
 
             if not getDataGps:
                 break
 
     except Exception as e:
-        print('Erro em getLocation: {}'.format(e))
+        pass
 
 
 def createConnection(dbFile):
@@ -223,14 +217,13 @@ def createTable(conn, sql):
 
 def insertData(gpsData):
     '''Insert data from gps to a Sqlite database file
-    :param conn: Connection object
     :param gpsData: Json data from GPS
     '''
     try:
 
         # Verifica se existe diferença de 1km entre locais
         ultima = retrievLastLocation()
-        atual = {gpsData['latitude'], gpsData['longitude']}
+        atual = {"latitude": gpsData["latitude"], "longitude": gpsData["longitude"]}
         distancia = haversine(ultima, atual)
         if distancia <= 1:
             return
@@ -255,33 +248,28 @@ def retrievData():
 
     data = datetime.now()
     try:
-        sql=f'''SELECT * FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
+        sql=f'''SELECT LATITUDE, LONGITUDE FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
         conn=createConnection('location.db')
         cur=conn.cursor()
         cur.execute(sql)
         result=cur.fetchall()
         conn.close()
 
-        # r=[row[i] for row in result for i in [0,1]]
-
-        latitude=''
-        longitude=''
-        trajeto = []        
-        for res in result:
-            latitude=res[0]
-            longitude=res[1]
-            trajeto.append([latitude,longitude])
-        
+        trajeto = []
+        trajetoaux = []
+        for lat, long in result:
+            trajeto.append({"latitude": lat, "longitude": long})
+            trajetoaux.append([lat, long])
+            
         i = 0
-        trajetoaux = copy.deepcopy(trajeto)        
+        #trajetoaux = copy.deepcopy(trajeto)
+
         while i < len(trajeto) - 1:
             dist = haversine(trajeto[i],trajeto[i+1])
             if dist > 1:
                 trajetoaux[i+1].append(dist)
             i+=1
-
         return render_template('gps.html', data=trajetoaux)
-
         
     except Error as e:
         print("Erro em retrievData {}".format(e))
@@ -292,9 +280,11 @@ def haversine(coord1, coord2):
     R = 6372800  
     #R = 6371
 
-    la1, lo1 = coord1
-    la2, lo2 = coord2
-
+    la1 = coord1["latitude"]
+    lo1 = coord1["longitude"]
+    la2 = coord2["latitude"]
+    lo2 = coord2["longitude"]
+    
     lat1 = float(la1)
     lon1 = float(lo1)
     lat2 = float(la2)
@@ -321,19 +311,17 @@ def retrievLastLocation():
     '''Retriev last location from database
     '''
     try:
-        sql = f'''SELECT * FROM LOCATION ORDER BY DATA DESC LIMIT 1 '''
+        sql = f'''SELECT LATITUDE, LONGITUDE FROM LOCATION ORDER BY DATA DESC LIMIT 1 '''
         conn = createConnection('location.db')
         cur = conn.cursor()
         cur.execute(sql)
         result = cur.fetchall()
-
-        latitude=''
-        longitude=''
+        
         ultimo = []
         for res in result:
             latitude=res[0]
             longitude=res[1]
-            ultimo = {latitude, longitude}
+            ultimo = {"latitude": latitude, "longitude": longitude}
         return ultimo
     except Error as e:
         print (f'Erro em retrievLastLocation: {e}')
