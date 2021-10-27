@@ -166,9 +166,12 @@ def getLocation(param):
                 myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
                 transformed=json.dumps(myOut)
                 pass
-
-            myJson=json.loads(transformed)
-            insertData(myJson)
+            
+            try:
+                myJson=json.loads(transformed)
+                insertData(myJson)
+            except Exception as err:
+                pass
             
             time.sleep(5)
 
@@ -248,7 +251,7 @@ def retrievData():
 
     data = datetime.now()
     try:
-        sql=f'''SELECT LATITUDE, LONGITUDE FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
+        sql=f'''SELECT LATITUDE, LONGITUDE, DATA FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
         conn=createConnection('location.db')
         cur=conn.cursor()
         cur.execute(sql)
@@ -257,9 +260,9 @@ def retrievData():
 
         trajeto = []
         trajetoaux = []
-        for lat, long in result:
+        for lat, long, data in result:
             trajeto.append({"latitude": lat, "longitude": long})
-            trajetoaux.append([lat, long])
+            trajetoaux.append([data.strftime('%d/%m/%Y'),  lat, long])
             
         i = 0
         #trajetoaux = copy.deepcopy(trajeto)

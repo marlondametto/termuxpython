@@ -4,8 +4,28 @@
 
 <div class="container">
     <h3>Quilometragem</h3>
-
-    {% print(data) %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Latitude</th>
+                <th scope="col">Longitude</th>
+                <th scope="col">Distância</th>
+                <th scope="col">Referência</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loc in data %}
+                <tr>
+                    <th scope='row'>{{loc[0]}}</th>
+                    <td>{{loc[1]}}</td>
+                    <td>{{loc[2]}}</td>
+                    <td>{{loc[3]}}</td>
+                    <td>N/I</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}
