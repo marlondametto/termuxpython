@@ -160,11 +160,11 @@ def getLocation(param):
         
         while True:
             try:            
-                myOut = subprocess.check_output(f'''termux-location -p network''', shell=True).strip()
+                myOut = subprocess.check_output(f'''termux-location''', shell=True).strip()
                 transformed=myOut.decode('utf-8')
             except Exception as er:
-                myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
-                transformed=json.dumps(myOut)
+                # myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
+                # transformed=json.dumps(myOut)
                 pass
             
             try:
@@ -250,8 +250,9 @@ def retrievData():
     '''
 
     data = datetime.now()
+    logging.warning(f'Retriev datetime {data}')
     try:
-        sql=f'''SELECT LATITUDE, LONGITUDE, DATA FROM LOCATION WHERE DATA >= {data.strftime('%d-%m-%Y')} ORDER BY DATA'''
+        sql=f'''SELECT LATITUDE, LONGITUDE, DATA FROM LOCATION WHERE DATA >= {data.strftime('%Y-%m-%d')} ORDER BY DATA'''
         conn=createConnection('location.db')
         cur=conn.cursor()
         cur.execute(sql)
@@ -314,7 +315,7 @@ def retrievLastLocation():
     '''Retriev last location from database
     '''
     try:
-        sql = f'''SELECT LATITUDE, LONGITUDE FROM LOCATION ORDER BY DATA DESC LIMIT 1 '''
+        sql = f'''SELECT LATITUDE, LONGITUDE, DATA FROM LOCATION ORDER BY DATA DESC LIMIT 1 '''
         conn = createConnection('location.db')
         cur = conn.cursor()
         cur.execute(sql)
@@ -325,6 +326,7 @@ def retrievLastLocation():
             latitude=res[0]
             longitude=res[1]
             ultimo = {"latitude": latitude, "longitude": longitude}
+            break
         return ultimo
     except Error as e:
         print (f'Erro em retrievLastLocation: {e}')
