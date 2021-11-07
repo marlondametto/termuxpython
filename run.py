@@ -139,7 +139,7 @@ def gps():
         global x
         x=threading.Thread(target=getLocation, args=(1,))        
         x.start()
-        return render_template('gps.html', data='Thread ativada')
+        return render_template('gps.html', data=['Thread ativada'])
 
     except Exception as e:
         return 'Erro em gps: {}'.format(e)        
@@ -163,7 +163,7 @@ def getLocation(param):
                 myOut = subprocess.check_output(f'''termux-location''', shell=True).strip()
                 transformed=myOut.decode('utf-8')
             except Exception as er:
-                # myOut = {'latitude':-25.2809042,'longitude':-54.0720255,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
+                # myOut = {'latitude':-25.2968058,'longitude':-54.0926096,'altitude': 789,'speed': 321,'data':f'{datetime.now()}'}
                 # transformed=json.dumps(myOut)
                 pass
             
@@ -188,7 +188,7 @@ def createConnection(dbFile):
     try:
         conn=sqlite3.connect(dbFile
             ,detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
-        print("Conectado a Sqlite3 {}".format(sqlite3.version))
+        print(f"{datetime.now} Conectado a Sqlite3 {sqlite3.version}")
 
         # sql criação de tabelas
         sql = '''CREATE TABLE IF NOT EXISTS LOCATION(
@@ -328,7 +328,7 @@ def retrievLastLocation():
             ultimo = {"latitude": latitude, "longitude": longitude}
             break
         
-        if ultimo.count() == 0:
+        if len(ultimo) == 0:
 
             # Coordenadas trabalho
             ultimo = {'latitude':-25.2809042,'longitude':-54.0720255}
