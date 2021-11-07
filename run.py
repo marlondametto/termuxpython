@@ -327,6 +327,12 @@ def retrievLastLocation():
             longitude=res[1]
             ultimo = {"latitude": latitude, "longitude": longitude}
             break
+        
+        if ultimo.count() == 0:
+
+            # Coordenadas trabalho
+            ultimo = {'latitude':-25.2809042,'longitude':-54.0720255}
+
         return ultimo
     except Error as e:
         print (f'Erro em retrievLastLocation: {e}')
